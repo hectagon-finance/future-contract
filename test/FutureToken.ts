@@ -41,6 +41,7 @@ describe('FutureToken', () => {
       expect(await futureToken.symbol()).eq(tokenSymbol);
       expect(await futureToken.decimals()).eq(decimals);
       expect(await futureToken.redeemableAt()).eq(redeemableAt);
+      expect(await futureToken.totalAssets()).eq(0);
     });
     it("can't deposit without transfer", async () => {
       await expect(futureToken.connect(other).deposit(tokenAmount)).reverted;
@@ -51,6 +52,9 @@ describe('FutureToken', () => {
     beforeEach(async () => {
       await erc20Token.connect(other).approve(futureToken.address, tokenAmount);
       await futureToken.connect(other).deposit(tokenAmount);
+    });
+    it('return balance of asset correctly', async () => {
+      expect(await futureToken.totalAssets()).equal(tokenAmount);
     });
     it('can deposit after transfer', async () => {
       expect(await erc20Token.balanceOf(other.address)).equal(0);

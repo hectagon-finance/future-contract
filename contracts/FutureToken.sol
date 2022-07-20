@@ -9,7 +9,7 @@ import "./interfaces/IFutureToken.sol";
 contract FutureToken is IFutureToken, ERC20 {
     using SafeERC20 for ERC20;
 
-    event Minted(address indexed sender, uint256 amount);
+    event Deposited(address indexed sender, uint256 amount);
     event Redeemed(address indexed sender, uint256 amount);
 
     address public creator;
@@ -22,7 +22,7 @@ contract FutureToken is IFutureToken, ERC20 {
         string memory _symbol,
         uint256 _redeemableAt
     ) ERC20(_name, _symbol) {
-        require(_asset != address(0), "Zero address");
+        require(_asset != address(0), "Null address asset");
         require(_redeemableAt > block.timestamp, "Redeem in past");
         creator = msg.sender;
         asset = ERC20(_asset);
@@ -36,7 +36,7 @@ contract FutureToken is IFutureToken, ERC20 {
     function deposit(uint256 _amount) public {
         asset.safeTransferFrom(msg.sender, address(this), _amount);
         _mint(msg.sender, _amount);
-        emit Minted(msg.sender, _amount);
+        emit Deposited(msg.sender, _amount);
     }
 
     function redeem(uint256 _amount) public {
@@ -44,5 +44,9 @@ contract FutureToken is IFutureToken, ERC20 {
         _burn(msg.sender, _amount);
         asset.safeTransfer(msg.sender, _amount);
         emit Redeemed(msg.sender, _amount);
+    }
+
+    function totalAssets() public view returns (uint256) {
+        return asset.balanceOf(address(this));
     }
 }
