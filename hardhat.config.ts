@@ -15,7 +15,15 @@ configEnv();
 const privateKey = process.env.PRIVATE_KEY ?? 'NO_PRIVATE_KEY';
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.10',
+  solidity: {
+    version: '0.8.10',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  },
   typechain: {
     outDir: 'typechain',
   },

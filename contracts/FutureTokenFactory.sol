@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./FutureToken.sol";
+import "./FutureTokenMintable.sol";
 import "./interfaces/IFutureTokenFactory.sol";
 import "./utils/DateTime.sol";
 
@@ -14,11 +15,25 @@ contract FutureTokenFactory is IFutureTokenFactory {
     event Created(address indexed asset, address futureToken, uint256 redeemableAt);
 
     mapping(uint256 => address) tokens;
-
-    function create(address _asset, uint256 _redeemableAt) public returns (address) {
+    modifier _notNullAsset(address _asset) {
+        require(_asset != address(0), "Null address asset");
+        _;
+    }
+    modifier _notExisted(address _asset, uint256 _redeemableAt) {
         require(get(_asset, _redeemableAt) == address(0), "Future Token existed");
+        _;
+    }
+    modifier _startOfDay(uint256 _redeemableAt) {
         require(_redeemableAt % 86400 == 0, "RedeemableAt must be start of day");
+        _;
+    }
 
+    function create(address _asset, uint256 _redeemableAt)
+        public
+        _notExisted(_asset, _redeemableAt)
+        _startOfDay(_redeemableAt)
+        returns (address)
+    {
         string memory tokenSuffix = _redeemableAt.formatYYYYMMDD();
 
         ERC20 futureToken = new FutureToken(
@@ -26,6 +41,25 @@ contract FutureTokenFactory is IFutureTokenFactory {
             string(abi.encodePacked("Future ", ERC20(_asset).name(), " ", tokenSuffix)),
             string(abi.encodePacked("f", ERC20(_asset).symbol(), tokenSuffix)),
             _redeemableAt
+        );
+        tokens[_hash(_asset, _redeemableAt)] = address(futureToken);
+        emit Created(_asset, address(futureToken), _redeemableAt);
+        return address(futureToken);
+    }
+
+    function createMintable(address _asset, uint256 _redeemableAt)
+        public
+        _notExisted(_asset, _redeemableAt)
+        _startOfDay(_redeemableAt)
+        returns (address)
+    {
+        string memory tokenSuffix = _redeemableAt.formatYYYYMMDD();
+        ERC20 futureToken = new FutureTokenMintable(
+            _asset,
+            string(abi.encodePacked("Future ", ERC20(_asset).name(), " ", tokenSuffix)),
+            string(abi.encodePacked("f", ERC20(_asset).symbol(), tokenSuffix)),
+            _redeemableAt,
+            msg.sender
         );
         tokens[_hash(_asset, _redeemableAt)] = address(futureToken);
         emit Created(_asset, address(futureToken), _redeemableAt);
