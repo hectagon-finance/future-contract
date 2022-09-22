@@ -32,40 +32,41 @@ describe('FutureTokenFactory', () => {
 
   describe('Create Future token', () => {
     it('should deploy new future token correctly', async () => {
-      const tx = await futureTokenFactory.create(erc20Token.address, redeemableAt);
+      const tx = await futureTokenFactory.create(erc20Token.address, 'fBot', 'fBOT', redeemableAt);
       const receipt = await tx.wait();
       const event = receipt?.events?.find((e) => e.event === 'Created');
       const futureAddress: string = event?.args?.futureToken;
-      expect(await futureTokenFactory.tokens(erc20Token.address, redeemableAt)).equal(
-        futureAddress,
-      );
 
       const futureToken = (await ethers.getContractFactory('FutureToken')).attach(futureAddress);
       expect(await futureToken.creator()).eq(futureTokenFactory.address);
-      expect(await futureToken.name()).equal(`Future ${tokenName} ${nextYear.format('YYYYMMDD')}`);
-      expect(await futureToken.symbol()).equal(`f${tokenSymbol}${nextYear.format('YYYYMMDD')}`);
+      expect(await futureToken.name()).equal('fBot');
+      expect(await futureToken.symbol()).equal('fBOT');
       expect(await futureToken.redeemableAt()).equal(redeemableAt);
+      expect(await futureToken.tokenType()).equal(1);
     });
   });
 
   describe('Create Future token mintable', () => {
     it('should deploy new future token correctly', async () => {
-      const tx = await futureTokenFactory.createMintable(erc20Token.address, redeemableAt);
+      const tx = await futureTokenFactory.createMintable(
+        erc20Token.address,
+        'fBot',
+        'fBOT',
+        redeemableAt,
+      );
       const receipt = await tx.wait();
       const event = receipt?.events?.find((e) => e.event === 'Created');
       const futureAddress: string = event?.args?.futureToken;
-      expect(await futureTokenFactory.tokens(erc20Token.address, redeemableAt)).equal(
-        futureAddress,
-      );
 
       const futureToken = (await ethers.getContractFactory('FutureTokenMintable')).attach(
         futureAddress,
       );
       expect(await futureToken.creator()).eq(futureTokenFactory.address);
       expect(await futureToken.owner()).eq(owner.address);
-      expect(await futureToken.name()).equal(`Future ${tokenName} ${nextYear.format('YYYYMMDD')}`);
-      expect(await futureToken.symbol()).equal(`f${tokenSymbol}${nextYear.format('YYYYMMDD')}`);
+      expect(await futureToken.name()).equal('fBot');
+      expect(await futureToken.symbol()).equal('fBOT');
       expect(await futureToken.redeemableAt()).equal(redeemableAt);
+      expect(await futureToken.tokenType()).equal(2);
       expect(await futureToken.mintable()).equal(true);
     });
   });
