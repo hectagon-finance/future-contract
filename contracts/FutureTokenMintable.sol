@@ -4,7 +4,7 @@ pragma solidity >=0.8.10;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./FutureToken.sol";
 
-error UNMINABLE();
+error UNMINTABLE();
 error HAS_DEBT();
 
 contract FutureTokenMintable is FutureToken, Ownable {
@@ -19,10 +19,11 @@ contract FutureTokenMintable is FutureToken, Ownable {
         address _owner
     ) FutureToken(_asset, _name, _symbol, _redeemableAt) {
         _transferOwnership(_owner);
+        tokenType = 2;
     }
 
     function _isMintable() internal view {
-        if (!mintable) revert UNMINABLE();
+        if (!mintable) revert UNMINTABLE();
     }
 
     modifier isMintable() {
@@ -31,7 +32,7 @@ contract FutureTokenMintable is FutureToken, Ownable {
     }
 
     function _noDebt() internal view {
-        if (totalDebts() != 0) revert HAS_DEBT();
+        if (totalDebts() == 0) revert HAS_DEBT();
     }
 
     modifier noDebt() {
@@ -41,6 +42,7 @@ contract FutureTokenMintable is FutureToken, Ownable {
 
     function disableMinting() public onlyOwner isMintable noDebt {
         mintable = false;
+        tokenType = 1;
         renounceOwnership();
     }
 

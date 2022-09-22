@@ -12,6 +12,7 @@ contract FutureToken is IFutureToken, ERC20 {
     event Deposited(address indexed sender, uint256 amount);
     event Redeemed(address indexed sender, uint256 amount);
 
+    uint256 public tokenType = 1; // type 1: only deposit, 2: mintable, 3: mintable and changeable asset
     address public creator;
     ERC20 public asset;
     uint256 public redeemableAt;
@@ -23,7 +24,6 @@ contract FutureToken is IFutureToken, ERC20 {
         uint256 _redeemableAt
     ) ERC20(_name, _symbol) {
         require(_asset != address(0), "Null address asset");
-        require(_redeemableAt > block.timestamp, "Redeem in past");
         creator = msg.sender;
         asset = ERC20(_asset);
         redeemableAt = _redeemableAt;

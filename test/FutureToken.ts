@@ -42,6 +42,7 @@ describe('FutureToken', () => {
       expect(await futureToken.decimals()).eq(decimals);
       expect(await futureToken.redeemableAt()).eq(redeemableAt);
       expect(await futureToken.totalAssets()).eq(0);
+      expect(await futureToken.tokenType()).eq(1);
     });
     it("can't deposit without transfer", async () => {
       await expect(futureToken.connect(other).deposit(tokenAmount)).reverted;

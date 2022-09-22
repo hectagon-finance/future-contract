@@ -49,6 +49,7 @@ describe('FutureTokenMintable', () => {
       expect(await futureToken.decimals()).eq(decimals);
       expect(await futureToken.redeemableAt()).eq(redeemableAt);
       expect(await futureToken.mintable()).eq(true);
+      expect(await futureToken.tokenType()).eq(2);
     });
   });
 
@@ -62,6 +63,10 @@ describe('FutureTokenMintable', () => {
     it("can't disable mintable if has debts", async () => {
       await futureToken.mint(tokenAmount);
       await expect(futureToken.connect(owner).disableMinting()).reverted;
+    });
+    it('change type to 1 after disable minting', async () => {
+      await futureToken.connect(owner).disableMinting();
+      expect(await futureToken.tokenType()).equal(1);
     });
     it("can't mint after disable mintable", async () => {
       await futureToken.connect(owner).disableMinting();
