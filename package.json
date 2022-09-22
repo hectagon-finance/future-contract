@@ -19,7 +19,9 @@
     "deploy:testnet": "hardhat --network testnet deploy",
     "deploy:binance": "hardhat --network binance deploy",
     "etherscan:testnet": "hardhat --network testnet etherscan-verify",
-    "etherscan:binance": "hardhat --network binance etherscan-verify"
+    "etherscan:binance": "hardhat --network binance etherscan-verify",
+    "etherscan:token:testnet": "hardhat --network testnet run scripts/verify_token.ts",
+    "etherscan:token:binance": "hardhat --network binance run scripts/verify_token.ts"
   },
   "keywords": [],
   "author": "",

@@ -40,7 +40,7 @@ contract FutureTokenMintable is FutureToken, Ownable {
         _;
     }
 
-    function disableMinting() public onlyOwner isMintable noDebt {
+    function disableMinting() public virtual onlyOwner isMintable noDebt {
         mintable = false;
         tokenType = 1;
         renounceOwnership();
@@ -51,8 +51,11 @@ contract FutureTokenMintable is FutureToken, Ownable {
         emit Minted(msg.sender, _amount);
     }
 
-    function totalDebts() public view returns (uint256) {
-        if (totalAssets() >= totalSupply()) return 0;
-        return totalSupply() - totalAssets();
+    function totalDebts() public view virtual returns (uint256) {
+        if (address(asset) == address(0)) return totalSupply();
+        uint256 _totalSupplyAsAsset = _futureToAsset(totalSupply());
+        uint256 _totalAssets = totalAssets();
+        if (_totalAssets >= _totalSupplyAsAsset) return 0;
+        return _totalSupplyAsAsset - _totalAssets;
     }
 }

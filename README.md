@@ -39,7 +39,6 @@ contract FutureToken {
   event Mint(address indexed sender, uint256 amount);
   event Redeem(address indexed sender, uint256 amount);
 
-  address public creator;
   ERC20 public asset;
   uint256 public redeemableAt;
 
@@ -58,6 +57,14 @@ contract FutureTokenMinable is FutureToken {
   function disableMinting() public;
 
   function totalDebts() public view returns (uint256);
+}
+
+contract FutureTokenChangeable is FutureTokenMinable {
+  event ChangedAsset(address indexed from, address indexed to);
+
+  function disableChanging() public;
+
+  function changeAsset() public;
 }
 
 ```

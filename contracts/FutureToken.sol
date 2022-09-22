@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IFutureToken.sol";
 
+error NO_ASSET();
+
 contract FutureToken is IFutureToken, ERC20 {
     using SafeERC20 for ERC20;
 
@@ -13,7 +15,6 @@ contract FutureToken is IFutureToken, ERC20 {
     event Redeemed(address indexed sender, uint256 amount);
 
     uint256 public tokenType = 1; // type 1: only deposit, 2: mintable, 3: mintable and changeable asset
-    address public creator;
     ERC20 public asset;
     uint256 public redeemableAt;
 
@@ -23,30 +24,46 @@ contract FutureToken is IFutureToken, ERC20 {
         string memory _symbol,
         uint256 _redeemableAt
     ) ERC20(_name, _symbol) {
-        require(_asset != address(0), "Null address asset");
-        creator = msg.sender;
         asset = ERC20(_asset);
         redeemableAt = _redeemableAt;
     }
 
-    function decimals() public view virtual override returns (uint8) {
-        return asset.decimals();
+    function _hasAsset() internal view {
+        if (address(asset) == address(0)) revert NO_ASSET();
     }
 
-    function deposit(uint256 _amount) public {
+    modifier hasAsset() {
+        _hasAsset();
+        _;
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 18;
+    }
+
+    function _futureToAsset(uint256 _amount) internal view returns (uint256) {
+        return (_amount * 10**asset.decimals()) / 10**decimals();
+    }
+
+    function _assetToFuture(uint256 _amount) internal view returns (uint256) {
+        return (_amount * 10**decimals()) / 10**asset.decimals();
+    }
+
+    function deposit(uint256 _amount) public virtual hasAsset {
         asset.safeTransferFrom(msg.sender, address(this), _amount);
-        _mint(msg.sender, _amount);
+        _mint(msg.sender, _assetToFuture(_amount));
         emit Deposited(msg.sender, _amount);
     }
 
-    function redeem(uint256 _amount) public {
+    function redeem(uint256 _amount) public virtual hasAsset {
         require(block.timestamp >= redeemableAt, "Not redeemable yet");
         _burn(msg.sender, _amount);
-        asset.safeTransfer(msg.sender, _amount);
+        asset.safeTransfer(msg.sender, _futureToAsset(_amount));
         emit Redeemed(msg.sender, _amount);
     }
 
     function totalAssets() public view returns (uint256) {
+        if (address(asset) == address(0)) return 0;
         return asset.balanceOf(address(this));
     }
 }

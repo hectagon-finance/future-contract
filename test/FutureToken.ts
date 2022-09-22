@@ -15,16 +15,19 @@ describe('FutureToken', () => {
   let futureToken: FutureToken;
   let erc20Token: MockERC20;
 
+  const futureDecimal = 18;
+  const futureAmount = BigNumber.from(10).pow(futureDecimal);
+
   const tokenName = 'Bot';
   const tokenSymbol = 'BOT';
   const decimals = 9;
-  const tokenAmount = BigNumber.from(String(1000 * 10 ** decimals));
+  const assetAmount = BigNumber.from(10).pow(decimals);
   const redeemableAt = BigNumber.from(String(nextYear.unix()));
 
   beforeEach(async () => {
     [owner, other] = await ethers.getSigners();
     erc20Token = await new MockERC20__factory(owner).deploy(tokenName, tokenSymbol, decimals);
-    erc20Token.mint(other.address, tokenAmount);
+    erc20Token.mint(other.address, assetAmount);
 
     futureToken = await new FutureToken__factory(owner).deploy(
       erc20Token.address,
@@ -36,40 +39,39 @@ describe('FutureToken', () => {
 
   describe('Deployment', () => {
     it('should deploy correctly', async () => {
-      expect(await futureToken.creator()).eq(owner.address);
       expect(await futureToken.name()).eq(tokenName);
       expect(await futureToken.symbol()).eq(tokenSymbol);
-      expect(await futureToken.decimals()).eq(decimals);
+      expect(await futureToken.decimals()).eq(futureDecimal);
       expect(await futureToken.redeemableAt()).eq(redeemableAt);
       expect(await futureToken.totalAssets()).eq(0);
       expect(await futureToken.tokenType()).eq(1);
     });
     it("can't deposit without transfer", async () => {
-      await expect(futureToken.connect(other).deposit(tokenAmount)).reverted;
+      await expect(futureToken.connect(other).deposit(assetAmount)).reverted;
     });
   });
 
   describe('Depositing', () => {
     beforeEach(async () => {
-      await erc20Token.connect(other).approve(futureToken.address, tokenAmount);
-      await futureToken.connect(other).deposit(tokenAmount);
+      await erc20Token.connect(other).approve(futureToken.address, assetAmount);
+      await futureToken.connect(other).deposit(assetAmount);
     });
     it('return balance of asset correctly', async () => {
-      expect(await futureToken.totalAssets()).equal(tokenAmount);
+      expect(await futureToken.totalAssets()).equal(assetAmount);
     });
     it('can deposit after transfer', async () => {
       expect(await erc20Token.balanceOf(other.address)).equal(0);
-      expect(await futureToken.balanceOf(other.address)).equal(tokenAmount);
+      expect(await futureToken.balanceOf(other.address)).equal(futureAmount);
     });
 
     it("can't redeem before redeemableAt", async () => {
-      await expect(futureToken.connect(other).redeem(tokenAmount)).reverted;
+      await expect(futureToken.connect(other).redeem(assetAmount)).reverted;
     });
 
     it('can redeem after redeemableAt', async () => {
       await network.provider.send('evm_setNextBlockTimestamp', [nextYear.unix()]);
-      await futureToken.connect(other).redeem(tokenAmount);
-      expect(await erc20Token.balanceOf(other.address)).equal(tokenAmount);
+      await futureToken.connect(other).redeem(futureAmount);
+      expect(await erc20Token.balanceOf(other.address)).equal(assetAmount);
       expect(await futureToken.balanceOf(other.address)).equal(0);
     });
   });

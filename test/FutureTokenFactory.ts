@@ -11,6 +11,7 @@ import {
   MockERC20__factory,
 } from '../typechain';
 
+const NULL_ADDRESS = '0x0000000000000000000000000000000000000000';
 dayjs.extend(utc);
 describe('FutureTokenFactory', () => {
   const nextYear = dayjs.utc().add(1, 'year').startOf('year');
@@ -32,13 +33,18 @@ describe('FutureTokenFactory', () => {
 
   describe('Create Future token', () => {
     it('should deploy new future token correctly', async () => {
-      const tx = await futureTokenFactory.create(erc20Token.address, 'fBot', 'fBOT', redeemableAt);
+      const tx = await futureTokenFactory.create(
+        '0x0000000000000000000000000000000000000001',
+        'fBot',
+        'fBOT',
+        redeemableAt,
+      );
       const receipt = await tx.wait();
       const event = receipt?.events?.find((e) => e.event === 'Created');
       const futureAddress: string = event?.args?.futureToken;
 
       const futureToken = (await ethers.getContractFactory('FutureToken')).attach(futureAddress);
-      expect(await futureToken.creator()).eq(futureTokenFactory.address);
+      expect(await futureToken.asset()).equal('0x0000000000000000000000000000000000000001');
       expect(await futureToken.name()).equal('fBot');
       expect(await futureToken.symbol()).equal('fBOT');
       expect(await futureToken.redeemableAt()).equal(redeemableAt);
@@ -61,13 +67,34 @@ describe('FutureTokenFactory', () => {
       const futureToken = (await ethers.getContractFactory('FutureTokenMintable')).attach(
         futureAddress,
       );
-      expect(await futureToken.creator()).eq(futureTokenFactory.address);
+      expect(await futureToken.asset()).equal(erc20Token.address);
       expect(await futureToken.owner()).eq(owner.address);
       expect(await futureToken.name()).equal('fBot');
       expect(await futureToken.symbol()).equal('fBOT');
       expect(await futureToken.redeemableAt()).equal(redeemableAt);
       expect(await futureToken.tokenType()).equal(2);
       expect(await futureToken.mintable()).equal(true);
+    });
+  });
+
+  describe('Create Future token changeable', () => {
+    it('should deploy new future token correctly', async () => {
+      const tx = await futureTokenFactory.createChangeable('fBot', 'fBOT', redeemableAt);
+      const receipt = await tx.wait();
+      const event = receipt?.events?.find((e) => e.event === 'Created');
+      const futureAddress: string = event?.args?.futureToken;
+
+      const futureToken = (await ethers.getContractFactory('FutureTokenChangeable')).attach(
+        futureAddress,
+      );
+      expect(await futureToken.asset()).equal(NULL_ADDRESS);
+      expect(await futureToken.owner()).eq(owner.address);
+      expect(await futureToken.name()).equal('fBot');
+      expect(await futureToken.symbol()).equal('fBOT');
+      expect(await futureToken.redeemableAt()).equal(redeemableAt);
+      expect(await futureToken.tokenType()).equal(3);
+      expect(await futureToken.mintable()).equal(true);
+      expect(await futureToken.changeable()).equal(true);
     });
   });
 });

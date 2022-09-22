@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./FutureToken.sol";
 import "./FutureTokenMintable.sol";
+import "./FutureTokenChangeable.sol";
 import "./interfaces/IFutureTokenFactory.sol";
 
 error NULL_ADDRESS();
@@ -41,6 +42,16 @@ contract FutureTokenFactory is IFutureTokenFactory {
     ) public notNullAsset(_asset) returns (address) {
         ERC20 futureToken = new FutureTokenMintable(_asset, _name, _symbol, _redeemableAt, msg.sender);
         emit Created(_asset, address(futureToken), _redeemableAt);
+        return address(futureToken);
+    }
+
+    function createChangeable(
+        string memory _name,
+        string memory _symbol,
+        uint256 _redeemableAt
+    ) public returns (address) {
+        ERC20 futureToken = new FutureTokenChangeable(_name, _symbol, _redeemableAt, msg.sender);
+        emit Created(address(0), address(futureToken), _redeemableAt);
         return address(futureToken);
     }
 }
