@@ -32,7 +32,7 @@ contract FutureTokenMintable is FutureToken, Ownable {
     }
 
     function _noDebt() internal view {
-        if (totalDebts() == 0) revert HAS_DEBT();
+        if (totalDebts() > 0) revert HAS_DEBT();
     }
 
     modifier noDebt() {

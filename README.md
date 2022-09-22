@@ -46,18 +46,18 @@ contract FutureToken {
   function deposit(uint256 _amount) public;
 
   function redeem(uint256 _amount) public;
+
+  function totalAssets() public view returns (uint256);
 }
 
-contract FutureTokenFactory {
-  event FutureTokenCreated(
-    address indexed futureToken,
-    address indexed asset,
-    uint256 redeemableAt
-  );
+contract FutureTokenMinable is FutureToken {
+  event Minted(address indexed sender, uint256 amount);
 
-  function create(address _asset, uint256 _redeemableAt) public returns (address);
+  function mint(uint256 _amount) public;
 
-  function get(address _asset, uint256 _redeemableAt) public view returns (address);
+  function disableMinting() public;
+
+  function totalDebts() public view returns (uint256);
 }
 
 ```
