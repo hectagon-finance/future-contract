@@ -50,12 +50,15 @@ contract FutureToken {
   function totalAssets() public view returns (uint256);
 }
 
-contract FutureTokenMinable is FutureToken {
-  event Minted(address indexed sender, uint256 amount);
+contract CreditToken {
+  event SetAsset(address indexed sender, uint256 amount);
+  event Redeem(address indexed sender, uint256 amount);
 
-  function mint(uint256 _amount) public;
+  function disableChanging() public;
 
-  function disableMinting() public;
+  function redeem(uint256 _amount) public;
+
+  function totalAssets() public view returns (uint256);
 
   function totalDebts() public view returns (uint256);
 }
