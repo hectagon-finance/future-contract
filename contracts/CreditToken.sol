@@ -13,7 +13,7 @@ contract CreditToken is ERC20, Ownable {
     using SafeERC20 for ERC20;
 
     event SetAsset(address asset);
-    event Redeemed(address indexed sender, uint256 amount);
+    event Redeemed(address indexed to, uint256 amount);
 
     bool public changeable = true;
     ERC20 public asset;
