@@ -9,8 +9,8 @@ import "./interfaces/IFutureToken.sol";
 contract FutureToken is IFutureToken, ERC20 {
     using SafeERC20 for ERC20;
 
-    event Deposited(address indexed sender, uint256 amount);
-    event Redeemed(address indexed sender, uint256 amount);
+    event Deposited(address indexed from, uint256 amount);
+    event Redeemed(address indexed to, uint256 amount);
 
     ERC20 public asset;
     uint256 public redeemableAt;

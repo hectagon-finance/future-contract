@@ -10,7 +10,7 @@ const main: DeployFunction = async ({
 
   console.log('Deploying contracts with the account: ', deployer);
 
-  await deploy('FutureTokenFactory', {
+  await deploy('TokenFactory', {
     from: deployer,
     args: [],
     log: true,
@@ -18,6 +18,6 @@ const main: DeployFunction = async ({
   });
 };
 
-main.tags = ['FutureTokenFactory'];
+main.tags = ['TokenFactory'];
 
 export default main;
