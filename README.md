@@ -56,6 +56,8 @@ contract CreditToken {
 
   function disableChanging() public;
 
+  function setAsset(address _asset) public;
+
   function redeem(uint256 _amount) public;
 
   function totalAssets() public view returns (uint256);
