@@ -17,11 +17,11 @@
     "typechain": "TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "fork": "hardhat node",
     "deploy:testnet": "hardhat --network testnet deploy",
-    "deploy:binance": "hardhat --network binance deploy",
+    "deploy:mainnet": "hardhat --network mainnet deploy",
     "etherscan:testnet": "hardhat --network testnet etherscan-verify",
-    "etherscan:binance": "hardhat --network binance etherscan-verify",
+    "etherscan:mainnet": "hardhat --network mainnet etherscan-verify",
     "etherscan:token:testnet": "hardhat --network testnet run scripts/verify_token.ts",
-    "etherscan:token:binance": "hardhat --network binance run scripts/verify_token.ts"
+    "etherscan:token:mainnet": "hardhat --network mainnet run scripts/verify_token.ts"
   },
   "keywords": [],
   "author": "",
