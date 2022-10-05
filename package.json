@@ -21,7 +21,11 @@
     "etherscan:testnet": "hardhat --network testnet etherscan-verify",
     "etherscan:mainnet": "hardhat --network mainnet etherscan-verify",
     "etherscan:token:testnet": "hardhat --network testnet run scripts/verify_token.ts",
-    "etherscan:token:mainnet": "hardhat --network mainnet run scripts/verify_token.ts"
+    "etherscan:token:mainnet": "hardhat --network mainnet run scripts/verify_token.ts",
+    "deploy:share:testnet": "hardhat --network testnet run scripts/deploy/02_deploy_share_token_factory.ts",
+    "deploy:share:mainnet": "hardhat --network mainnet run scripts/deploy/02_deploy_share_token_factory.ts",
+    "etherscan:share:testnet": "hardhat --network testnet run scripts/verify_token.ts",
+    "etherscan:share:mainnet": "hardhat --network mainnet run scripts/verify_share_token.ts"
   },
   "keywords": [],
   "author": "",

@@ -6,17 +6,17 @@ k2@hectagon.finance
 
 Abstract
 
-Vesting is a common practice in Crypto investment but it is an inefficient way of using capital. This paper advocates the implementation of a future token (ERC20) representing the right to redeem the original token at a future date, and discusses some of its use-cases.
+Vesting is a common practice in Crypto sharement but it is an inefficient way of using capital. This paper advocates the implementation of a future token (ERC20) representing the right to redeem the original token at a future date, and discusses some of its use-cases.
 
 # Motivation
 
-Crypto projects require capital to bootstrap. Typically, dev teams promise investors a vesting schedule to redeem their investing power with a portion of project tokens. As the industry grows, billions of dollars' worth is unrealized in the form of teams' promises because of investors' inaccessibility to capital when the vesting schedule is undue.
+Crypto projects require capital to bootstrap. Typically, dev teams promise shareors a vesting schedule to redeem their shareing power with a portion of project tokens. As the industry grows, billions of dollars' worth is unrealized in the form of teams' promises because of shareors' inaccessibility to capital when the vesting schedule is undue.
 
 This vesting schedule create a number of critical problems:
 
 - The dev team's holding all the cards: they take money but their obligations are not on-chain thus not crypto-grade-trusted.
 
-- It goes against the tokenization spirit when investment power has been spent but there is no token representing that activity.
+- It goes against the tokenization spirit when sharement power has been spent but there is no token representing that activity.
 
 # Summary
 
@@ -73,14 +73,14 @@ The Future Token contract is an ERC20 token and anyone can easily create a Liqui
 
 The adaptation of future token will affect crypto industry in few ways:
 
-## Investment activity
+## Sharement activity
 
-With the help of future tokens, tracing early investment in crypto would be easier since every token spent by investors will be rewarded with future tokens. This helps push more transparency and liquidity to the industry.
+With the help of future tokens, tracing early sharement in crypto would be easier since every token spent by shareors will be rewarded with future tokens. This helps push more transparency and liquidity to the industry.
 
 The difference between Market Cap and Fully Diluted Market Cap will be smaller, meaning tokenomics which allow lavish promise will have a harder time.
 
 ## New market
 
-Future tokens provide the opportunity to trade against the future value of a token and represent the right to buy a token at a future date. Billions of dollars locked in the form of vesting tokens and billions of dollars in the future investment market now can participate in trading.
+Future tokens provide the opportunity to trade against the future value of a token and represent the right to buy a token at a future date. Billions of dollars locked in the form of vesting tokens and billions of dollars in the future sharement market now can participate in trading.
 
 In conclusion, the future token is another form of extracting unrealized value from assets that many crypto had done before. We are expecting the adoption will help expand the Crypto market many more times.
