@@ -1,4 +1,4 @@
-import hre from 'hardhat';
+import { ethers, network } from 'hardhat';
 import { BigNumber } from 'ethers';
 import dayjs from 'dayjs';
 import { exec } from 'child_process';
@@ -7,20 +7,28 @@ const execPromise = promisify(exec);
 
 const nextYear = BigNumber.from(dayjs().add(1, 'year').unix());
 const totalSupply = BigNumber.from(10).pow(18);
-
 const ASSET_ADDRESS = '0x0000000000000000000000000000000000000001';
 const gasLimit = BigNumber.from('3000000');
 
 async function main() {
-  const factoryAddress = '';
-  if (!factoryAddress) {
-    console.log('Please provide factory address');
-    return;
-  }
-  const { deployer } = await hre.getNamedAccounts();
+  const [deployer] = await ethers.getSigners();
 
-  const TokenFactory = await hre.ethers.getContractFactory('TokenFactory');
-  const factory = TokenFactory.attach(factoryAddress);
+  console.log('Deploying contracts with the account: ', deployer.address);
+
+  const TokenFactory = await ethers.getContractFactory('TokenFactory');
+  const factory = await TokenFactory.deploy();
+  console.log('TokenFactory:', factory.address);
+
+  console.log(`Verifying token factory...`);
+  try {
+    const cmd = `npx hardhat verify ${factory.address} --network ${network.name} --contract "contracts/TokenFactory.sol:TokenFactory"`;
+    console.log(cmd);
+    const { stdout } = await execPromise(cmd);
+    console.log(stdout);
+  } catch (e: any) {
+    console.error(e.toString());
+  }
+
   console.log(`Creating future token...`);
   const tx1 = await factory.createFutureToken(ASSET_ADDRESS, 'f', 'F', nextYear, {
     gasLimit,
@@ -39,23 +47,25 @@ async function main() {
 
   console.log(`Verifying future token...`);
   try {
-    const { stdout } = await execPromise(
-      `npx hardhat verify ${futureAddress} --network ${hre.network.name} --contract "contracts/FutureToken.sol:FutureToken" "${ASSET_ADDRESS}" "f" "F" "${nextYear}"`,
-    );
+    const cmd1 = `npx hardhat verify ${futureAddress} --network ${network.name} --contract "contracts/FutureToken.sol:FutureToken" "${ASSET_ADDRESS}" "f" "F" "${nextYear}"`;
+    console.log(cmd1);
+    const { stdout } = await execPromise(cmd1);
     console.log(stdout);
   } catch (e: any) {
-    console.log(e.toString());
+    console.error(e.toString());
   }
   console.log(`Verifying credit token...`);
   try {
-    const { stdout } = await execPromise(
-      `npx hardhat verify ${creditAddress} --network ${
-        hre.network.name
-      } --contract "contracts/CreditToken.sol:CreditToken" "${ASSET_ADDRESS}" "c" "C" "${nextYear}" "${totalSupply.toString()}" "${deployer}"`,
-    );
+    const cmd2 = `npx hardhat verify ${creditAddress} --network ${
+      network.name
+    } --contract "contracts/CreditToken.sol:CreditToken" "${ASSET_ADDRESS}" "c" "C" "${nextYear}" "${totalSupply.toString()}" "${
+      deployer.address
+    }"`;
+    console.log(cmd2);
+    const { stdout } = await execPromise(cmd2);
     console.log(stdout);
   } catch (e: any) {
-    console.log(e.toString());
+    console.error(e.toString());
   }
   console.log('Completed');
 }
