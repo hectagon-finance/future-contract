@@ -24,6 +24,7 @@ describe('CreditToken', () => {
   const assetDecimals = 9;
   const assetAmount = BigNumber.from(10).pow(assetDecimals);
   const redeemableAt = BigNumber.from(String(nextYear.unix()));
+  const description = 'BOT';
 
   beforeEach(async () => {
     [owner, other] = await ethers.getSigners();
@@ -37,6 +38,7 @@ describe('CreditToken', () => {
       redeemableAt,
       creditAmount,
       owner.address,
+      description
     );
   });
 
@@ -50,6 +52,7 @@ describe('CreditToken', () => {
       expect(await creditToken.totalSupply()).eq(creditAmount);
       expect(await creditToken.totalAssets()).eq(0);
       expect(await creditToken.totalDebts()).eq(creditAmount);
+      expect(await creditToken.description()).eq(description);
     });
   });
 
@@ -91,6 +94,12 @@ describe('CreditToken', () => {
       await assetToken.transfer(creditToken.address, assetAmount);
       await creditToken.connect(other).redeem(creditAmount);
       expect(await assetToken.balanceOf(other.address)).equals(assetAmount);
+    });
+  });
+
+  describe('Set description', () => {
+    it('only owner can set description', async () => {
+      await expect(creditToken.connect(other).setDescription(description)).reverted;
     });
   });
 });

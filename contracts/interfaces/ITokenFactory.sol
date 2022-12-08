@@ -6,7 +6,8 @@ interface ITokenFactory {
         address _asset,
         string memory _name,
         string memory _symbol,
-        uint256 _redeemableAt
+        uint256 _redeemableAt,
+        string memory _description
     ) external returns (address);
 
     function createCreditToken(
@@ -14,6 +15,7 @@ interface ITokenFactory {
         string memory _name,
         string memory _symbol,
         uint256 _redeemableAt,
-        uint256 _totalSupply
+        uint256 _totalSupply,
+        string memory _description
     ) external returns (address);
 }

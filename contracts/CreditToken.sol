@@ -14,11 +14,13 @@ contract CreditToken is ICreditToken, ERC20, ERC20Burnable, Ownable {
     using SafeERC20 for ERC20;
 
     event SetAsset(address asset);
+    event SetDescription(string desc);
     event Redeemed(address indexed to, uint256 amount);
 
     bool public changeable = true;
     ERC20 public asset;
     uint256 public redeemableAt;
+    string public description;
 
     constructor(
         address _asset,
@@ -26,10 +28,12 @@ contract CreditToken is ICreditToken, ERC20, ERC20Burnable, Ownable {
         string memory _symbol,
         uint256 _redeemableAt,
         uint256 _totalSupply,
-        address _owner
+        address _owner,
+        string memory _description
     ) ERC20(_name, _symbol) {
         asset = ERC20(_asset);
         redeemableAt = _redeemableAt;
+        description = _description;
         _transferOwnership(_owner);
         _mint(_owner, _totalSupply);
     }
@@ -87,5 +91,10 @@ contract CreditToken is ICreditToken, ERC20, ERC20Burnable, Ownable {
     function setAsset(address _asset) public onlyOwner isChangeable {
         asset = ERC20(_asset);
         emit SetAsset(_asset);
+    }
+
+    function setDescription(string memory _description) public onlyOwner {
+        description = _description;
+        emit SetDescription(_description);
     }
 }

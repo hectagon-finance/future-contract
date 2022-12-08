@@ -8,7 +8,7 @@ import { FutureToken, FutureToken__factory, MockERC20, MockERC20__factory } from
 
 dayjs.extend(utc);
 describe('FutureToken', () => {
-  const nextYear = dayjs.utc().add(1, 'year').startOf('year');
+  const nextYear = dayjs.utc().add(2, 'year').startOf('year');
 
   let owner: SignerWithAddress;
   let other: SignerWithAddress;
@@ -23,6 +23,7 @@ describe('FutureToken', () => {
   const assetDecimals = 9;
   const assetAmount = BigNumber.from(10).pow(assetDecimals);
   const redeemableAt = BigNumber.from(String(nextYear.unix()));
+  const description = 'BOT';
 
   beforeEach(async () => {
     [owner, other] = await ethers.getSigners();
@@ -34,6 +35,7 @@ describe('FutureToken', () => {
       assetName,
       assetSymbol,
       redeemableAt,
+      description,
     );
   });
 
@@ -44,6 +46,7 @@ describe('FutureToken', () => {
       expect(await futureToken.decimals()).eq(futureDecimals);
       expect(await futureToken.redeemableAt()).eq(redeemableAt);
       expect(await futureToken.totalAssets()).eq(0);
+      expect(await futureToken.description()).eq(description);
     });
     it("can't deposit without transfer", async () => {
       await expect(futureToken.connect(other).deposit(assetAmount)).reverted;

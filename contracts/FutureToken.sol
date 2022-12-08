@@ -13,16 +13,19 @@ contract FutureToken is IFutureToken, ERC20 {
 
     ERC20 public asset;
     uint256 public redeemableAt;
+    string public description;
 
     constructor(
         address _asset,
         string memory _name,
         string memory _symbol,
-        uint256 _redeemableAt
+        uint256 _redeemableAt,
+        string memory _description
     ) ERC20(_name, _symbol) {
         require(_asset != address(0), "Null address asset");
         asset = ERC20(_asset);
         redeemableAt = _redeemableAt;
+        description = _description;
     }
 
     function decimals() public view virtual override returns (uint8) {

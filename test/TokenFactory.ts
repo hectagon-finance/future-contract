@@ -32,6 +32,7 @@ describe('TokenFactory', () => {
         'fBot',
         'fBOT',
         redeemableAt,
+        'fBOT desc'
       );
       const receipt = await tx.wait();
       const event = receipt?.events?.find((e) => e.event === 'CreatedFutureToken');
@@ -40,6 +41,7 @@ describe('TokenFactory', () => {
       const futureToken = (await ethers.getContractFactory('FutureToken')).attach(futureAddress);
       expect(await futureToken.name()).equal('fBot');
       expect(await futureToken.symbol()).equal('fBOT');
+      expect(await futureToken.description()).equal('fBOT desc');
       expect(await futureToken.redeemableAt()).equal(redeemableAt);
     });
   });
@@ -53,6 +55,7 @@ describe('TokenFactory', () => {
         'fBOT',
         redeemableAt,
         totalSupply,
+        'fBOT desc'
       );
       const receipt = await tx.wait();
       const event = receipt?.events?.find((e) => e.event === 'CreatedCreditToken');
@@ -64,6 +67,7 @@ describe('TokenFactory', () => {
       expect(await creditToken.symbol()).equal('fBOT');
       expect(await creditToken.redeemableAt()).equal(redeemableAt);
       expect(await creditToken.totalSupply()).equal(totalSupply);
+      expect(await creditToken.description()).equal('fBOT desc');
     });
   });
 });

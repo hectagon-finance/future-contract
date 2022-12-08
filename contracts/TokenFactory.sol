@@ -16,9 +16,10 @@ contract TokenFactory is ITokenFactory {
         address _asset,
         string memory _name,
         string memory _symbol,
-        uint256 _redeemableAt
+        uint256 _redeemableAt,
+        string memory _description
     ) public returns (address) {
-        ERC20 futureToken = new FutureToken(_asset, _name, _symbol, _redeemableAt);
+        ERC20 futureToken = new FutureToken(_asset, _name, _symbol, _redeemableAt, _description);
         emit CreatedFutureToken(address(futureToken));
         return address(futureToken);
     }
@@ -28,9 +29,18 @@ contract TokenFactory is ITokenFactory {
         string memory _name,
         string memory _symbol,
         uint256 _redeemableAt,
-        uint256 _totalSupply
+        uint256 _totalSupply,
+        string memory _description
     ) public returns (address) {
-        ERC20 creditToken = new CreditToken(_asset, _name, _symbol, _redeemableAt, _totalSupply, msg.sender);
+        ERC20 creditToken = new CreditToken(
+            _asset,
+            _name,
+            _symbol,
+            _redeemableAt,
+            _totalSupply,
+            msg.sender,
+            _description
+        );
         emit CreatedCreditToken(address(creditToken));
         return address(creditToken);
     }
